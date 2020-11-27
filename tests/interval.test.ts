@@ -30,7 +30,7 @@ describe('converts to Interval', function () {
 		expect(() => Interval.fromString('12-00:11')).toThrow();
 	});
 	it('Dates to Interval', () => {
-		expect(Interval.fromDate(new Date(2020, 1, 10, 12, 0, 15), new Date(2020, 1, 15, 12, 0, 15)).toString()).toEqual('5:00:00:00');
+		expect(Interval.fromDates(new Date(2020, 1, 10, 12, 0, 15), new Date(2020, 1, 15, 12, 0, 15)).toString()).toEqual('5:00:00:00');
 	});
 });
 
@@ -53,15 +53,15 @@ describe('converts to date', function () {
 
 
 describe('accessors methods', function () {
-	it('access sign, h, m, s', () => {
-		let t = new Interval(1, 12, 10, 11)
+	it('access sign, d, h, m, s', () => {
+		let t = new Interval(1, 12, 10, 11);
 		expect(t.d).toEqual(12);
 		expect(t.h).toEqual(10);
 		expect(t.m).toEqual(11);
 		expect(t.s).toEqual(0);
 		expect(t.sign).toEqual(1);
 
-		t = new Interval(-1, 12, 10, 11)
+		t = new Interval(-1, 12, 10, 11);
 		expect(t.d).toEqual(12);
 		expect(t.h).toEqual(10);
 		expect(t.m).toEqual(11);
@@ -69,48 +69,24 @@ describe('accessors methods', function () {
 		expect(t.sign).toEqual(-1);
 	});
 
-	it('adds without overflows', () => {
-		const t = new Interval(1, 0, 12, 10, 11);
-		t.s += 3;
-		expect(t.s).toEqual(14);
-		t.m += 10;
-		expect(t.m).toEqual(20);
-		t.h += 11;
-		expect(t.h).toEqual(23);
-	});
+	it('access totals', () => {
+		let t = new Interval(1, 12, 10, 11, 1);
+		expect(t.totalDays).toEqual(12);
+		expect(t.totalHours).toEqual(298);
+		expect(t.totalMinutes).toEqual(17891);
+		expect(t.totalSeconds).toEqual(1073461);
 
-	it('adds with overflows', () => {
-		const t = new Interval(1, 0, 12, 10, 11);
-		t.s += 123;
-		expect(t.s).toEqual(14);
-		expect(t.m).toEqual(12);
-		t.m += 50 + 60;
-		expect(t.m).toEqual(2);
-		expect(t.h).toEqual(14);
-		t.h += 12 + 24;
-		expect(t.h).toEqual(2);
-	});
+		t = new Interval(-1, 12, 10, 11, 0);
+		expect(t.totalDays).toEqual(-12);
+		expect(t.totalHours).toEqual(-298);
+		expect(t.totalMinutes).toEqual(-17891);
+		expect(t.totalSeconds).toEqual(-1073460);
 
-	it('subs without overflows', () => {
-		const t = new Interval(1, 0, 12, 10, 11);
-		t.s += -3;
-		expect(t.s).toEqual(8);
-		t.m -= 10;
-		expect(t.m).toEqual(0);
-		t.h -= 11;
-		expect(t.h).toEqual(1);
-	});
-
-	it('subs with overflows', () => {
-		const t = new Interval(1, 0, 12, 10, 11);
-		t.s -= 123;
-		expect(t.s).toEqual(8);
-		expect(t.m).toEqual(8);
-		t.m -= 50 + 60;
-		expect(t.m).toEqual(18);
-		expect(t.h).toEqual(10);
-		t.h -= 12 + 24;
-		expect(t.h).toEqual(22);
+		t = new Interval(-1, 12);
+		expect(t.totalDays).toEqual(-12);
+		expect(t.totalHours).toEqual(-288);
+		expect(t.totalMinutes).toEqual(-17280);
+		expect(t.totalSeconds).toEqual(-1036800);
 	});
 
 	it('changes sign', () => {
