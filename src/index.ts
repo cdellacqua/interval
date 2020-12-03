@@ -204,18 +204,18 @@ export class Interval {
 	/**
 	 * Returns a string representation for the current instance
 	 */
-	toString(): string {
+	toString(full?: boolean): string {
 		const parts = [this.d, this.h, this.m, this.s];
-		let index = parts.findIndex((n) => n !== 0);
+		let index = full ? 0 : parts.findIndex((n) => n !== 0);
 
 		const outParts = parts.slice(index);
 		let result = '';
 
 		result = [outParts[0].toString(), outParts.slice(1).map((n) => n.toString().padStart(2, '0')).join(':')]
 			.filter(Boolean)
-			.join(this.d > 0 ? 'd' : ':');
+			.join(outParts.length > 3 ? 'd' : ':');
 
-		if (result !== '0') {
+		if (result !== '0' && result !== '0d00:00:00') {
 			result = (this.isNegative ? '-' : '') + result;
 		}
 

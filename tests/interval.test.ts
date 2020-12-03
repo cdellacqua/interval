@@ -50,6 +50,15 @@ describe('converts to string', function () {
 	it('Interval to JSON', () => {
 		expect(Interval.fromString('12:00:00').toJSON()).toEqual('12:00:00');
 		expect(Interval.fromString('0').toJSON()).toEqual('0');
+		expect(Interval.fromString('0').toJSON()).toEqual('0');
+	});
+	it('Interval to String', () => {
+		expect(Interval.fromString('12:00:00').toString(true)).toEqual('0d12:00:00');
+		expect(Interval.fromString('12:00:00').toString(false)).toEqual('12:00:00');
+		expect(Interval.fromString('0').toString(true)).toEqual('0d00:00:00');
+		expect(Interval.fromString('0').toString(false)).toEqual('0');
+		expect(Interval.fromString('-0').toString(true)).toEqual('0d00:00:00');
+		expect(Interval.fromString('-0').toString(false)).toEqual('0');
 	});
 });
 
