@@ -203,6 +203,7 @@ export class Interval {
 
 	/**
 	 * Returns a string representation for the current instance
+	 * @param full (optional) set to true to return a full representation (D:HH:MM:SS), by default the string representation trims leading 0s
 	 */
 	toString(full?: boolean): string {
 		const parts = [this.d, this.h, this.m, this.s];

@@ -376,9 +376,15 @@ ___
 
 ###  toString
 
-▸ **toString**(): *string*
+▸ **toString**(`full?`: undefined | false | true): *string*
 
 Returns a string representation for the current instance
+
+**Parameters:**
+
+Name | Type | Description |
+------ | ------ | ------ |
+`full?` | undefined &#124; false &#124; true | (optional) set to true to return a full representation (D:HH:MM:SS), by default the string representation trims leading 0s  |
 
 **Returns:** *string*
 
