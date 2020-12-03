@@ -90,7 +90,7 @@ Constructs an Interval object
 
 Name | Type | Description |
 ------ | ------ | ------ |
-`str` | string | a string representation of an Interval (-)D:HH:MM:SS  |
+`str` | string | a string representation of an Interval (-)DdHH:MM:SS  |
 
 **Returns:** *[Interval](interval.md)*
 
@@ -104,9 +104,9 @@ ___
 
 ### `Static` `Readonly` regex
 
-▪ **regex**: *RegExp‹›* = /^(-?)(\d+:)?(\d+:)?(\d+:)?(\d+)$/
+▪ **regex**: *RegExp‹›* = /^(-?)(\d+d)?(\d+:)?(\d+:)?(\d+)?$/
 
-regex for format (-)D:H:M:S
+regex for format (-)DdH:M:S
 
 ## Accessors
 
@@ -308,9 +308,9 @@ ___
 
 ###  toDate
 
-▸ **toDate**(`year`: number, `month`: number, `date`: number): *Date*
+▸ **toDate**(`year`: number, `month`: number, `date?`: undefined | number, `h?`: undefined | number, `m?`: undefined | number, `s?`: undefined | number): *Date*
 
-Returns a Date object with the interval of day set according to this instance
+Returns a Date object, its time is set to the reference Date plus the interval instance value
 
 **Parameters:**
 
@@ -318,13 +318,16 @@ Name | Type | Description |
 ------ | ------ | ------ |
 `year` | number | year |
 `month` | number | month |
-`date` | number | date  |
+`date?` | undefined &#124; number | date |
+`h?` | undefined &#124; number | hour |
+`m?` | undefined &#124; number | minute |
+`s?` | undefined &#124; number | second  |
 
 **Returns:** *Date*
 
 ▸ **toDate**(`date`: Date): *Date*
 
-Returns a new Date object with the interval of day set according to this instance
+Returns a new Date object, its time is set to the reference Date plus the interval instance value
 
 **Parameters:**
 
@@ -336,7 +339,7 @@ Name | Type | Description |
 
 ▸ **toDate**(): *Date*
 
-Returns a new Date object with the interval of day set according to this instance
+Returns a new Date object, its time is set to now plus the interval instance value
 
 **Returns:** *Date*
 

@@ -3,9 +3,9 @@
  */
 export class Interval {
 	/**
-	 * regex for format (-)D:H:M:S
+	 * regex for format (-)DdH:M:S
 	 */
-	static readonly regex = /^(-?)(\d+:)?(\d+:)?(\d+:)?(\d+)$/;
+	static readonly regex = /^(-?)(\d+d)?(\d+:)?(\d+:)?(\d+)?$/;
 
 	_totalSeconds = 0;
 
@@ -77,7 +77,7 @@ export class Interval {
 	constructor(s?: number);
 	/**
 	 * Constructs an Interval object
-	 * @param str a string representation of an Interval (-)D:HH:MM:SS
+	 * @param str a string representation of an Interval (-)DdHH:MM:SS
 	 */
 	constructor(str: string);
 	constructor(secondsOrSignOrDate?: number | string, d?: number, h?: number, m?: number, s?: number) {
@@ -85,18 +85,18 @@ export class Interval {
 			this._totalSeconds = 0;
 		} else if (typeof secondsOrSignOrDate === 'string') {
 			const matches = secondsOrSignOrDate.match(Interval.regex);
-
-			if (!matches) {
+			
+			if (!matches || secondsOrSignOrDate === '' || secondsOrSignOrDate === '-') {
 				throw new Error(`invalid interval format ${secondsOrSignOrDate}`);
 			}
 
-			const values = matches.slice(2).filter(Boolean).map((v) => Number(v.indexOf(':') !== -1 ? v.slice(0, -1) : v));
-
 			const sign = matches[1] === '-' ? -1 : 1;
-			this._totalSeconds = sign * (Number(values[values.length - 1])
-				+ Number(values[values.length - 2] || 0) * 60
-				+ Number(values[values.length - 3] || 0) * 60 * 60
-				+ Number(values[values.length - 4] || 0) * 60 * 60 * 24);
+			const timeValues = matches.slice(3).filter(Boolean).map((v) => Number(v.slice(-1) === ':' ? v.slice(0, -1) : v));
+			this._totalSeconds = sign * (Number(timeValues[timeValues.length - 1] || 0)
+				+ Number(timeValues[timeValues.length - 2] || 0) * 60
+				+ Number(timeValues[timeValues.length - 3] || 0) * 60 * 60
+				+ Number((matches[2] && matches[2].slice(0, -1)) || 0) * 60 * 60 * 24);
+			
 		} else if (d === undefined) {
 			this._totalSeconds = secondsOrSignOrDate;
 		} else {
@@ -143,29 +143,44 @@ export class Interval {
 	}
 
 	/**
-	 * Returns a Date object with the interval of day set according to this instance
+	 * Returns a Date object, its time is set to the reference Date plus the interval instance value
 	 * @param year year
 	 * @param month month
 	 * @param date date
+	 * @param h hour
+	 * @param m minute
+	 * @param s second
 	 */
-	toDate(year: number, month: number, date: number): Date;
+	toDate(year: number, month: number, date?: number, h?: number, m?: number, s?: number): Date;
 	/**
-	 * Returns a new Date object with the interval of day set according to this instance
+	 * Returns a new Date object, its time is set to the reference Date plus the interval instance value
 	 * @param date the reference Date the year, month and date will be extracted from
 	 */
 	toDate(date: Date): Date;
 	/**
-	 * Returns a new Date object with the interval of day set according to this instance
+	 * Returns a new Date object, its time is set to now plus the interval instance value
 	 */
 	toDate(): Date;
 
-	toDate(dateOrYear?: number | Date, month?: number, date?: number): Date {
+	toDate(dateOrYear?: number | Date, month?: number, date?: number, h?: number, m?: number, s?: number): Date {
 		if (!dateOrYear) {
 			return this.toDate(new Date());
 		}
+
+		let stopParams = false;
 		const native = typeof dateOrYear === "number"
-			? new Date(dateOrYear, month!, date!)
-			: new Date(dateOrYear.getFullYear(), dateOrYear.getMonth(), dateOrYear.getDate());
+			? new (Date as any)(
+				...([dateOrYear, month!, date, h, m, s]
+					.reduce((acc: number[], v?: number) => {
+						if (stopParams || (v === undefined || v === null)) {
+							stopParams = true;
+							return acc;
+						}
+						return [...acc, v];
+					},
+						[] as number[],
+					)))
+			: new Date(dateOrYear.getTime());
 
 		native.setTime(native.getTime() + (this.totalSeconds * 1000));
 
@@ -196,7 +211,9 @@ export class Interval {
 		const outParts = parts.slice(index);
 		let result = '';
 
-		result = [outParts[0].toString(), outParts.slice(1).map((n) => n.toString().padStart(2, '0')).join(':')].filter(Boolean).join(':');
+		result = [outParts[0].toString(), outParts.slice(1).map((n) => n.toString().padStart(2, '0')).join(':')]
+			.filter(Boolean)
+			.join(this.d > 0 ? 'd' : ':');
 
 		if (result !== '0') {
 			result = (this.isNegative ? '-' : '') + result;

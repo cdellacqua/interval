@@ -25,12 +25,24 @@ describe('converts to Interval', function () {
 	it('string to Interval', () => {
 		expect(Interval.fromString('-12:00:00').toString()).toEqual('-12:00:00');
 		expect(Interval.fromString('12:00:00').toString()).toEqual('12:00:00');
+		expect(Interval.fromString('10d12:00:00').toString()).toEqual('10d12:00:00');
+		expect(Interval.fromString('-10d12:00:00').toString()).toEqual('-10d12:00:00');
+		expect(Interval.fromString('-10d').toString()).toEqual('-10d00:00:00');
+		expect(Interval.fromString('-10d12').toString()).toEqual('-10d00:00:12');
+		expect(Interval.fromString('-10d12:00').toString()).toEqual('-10d00:12:00');
+		expect(Interval.fromString('-10d12:00:00').toString()).toEqual('-10d12:00:00');
+		expect(Interval.fromString('0').toString()).toEqual('0');
+		expect(Interval.fromString('0d').toString()).toEqual('0');
+		expect(Interval.fromString('12:00').toString()).toEqual('12:00');
+		expect(Interval.fromString('12:01:00').toString()).toEqual('12:01:00');
+		expect(Interval.fromString('3d12:01:00').toString()).toEqual('3d12:01:00');
+		expect(Interval.fromString('0d12:01:00').toString()).toEqual('12:01:00');
 	});
 	it('invalid string to DateOnly', () => {
 		expect(() => Interval.fromString('12-00:11')).toThrow();
 	});
 	it('Dates to Interval', () => {
-		expect(Interval.fromDates(new Date(2020, 1, 10, 12, 0, 15), new Date(2020, 1, 15, 12, 0, 15)).toString()).toEqual('5:00:00:00');
+		expect(Interval.fromDates(new Date(2020, 1, 10, 12, 0, 15), new Date(2020, 1, 15, 12, 0, 15)).toString()).toEqual('5d00:00:00');
 	});
 });
 
@@ -46,6 +58,9 @@ describe('converts to date', function () {
 	it('Interval to Date', () => {
 		expect(Interval.fromString('12:00:00').toDate(new Date(2020, 0, 1))).toEqual(new Date(2020, 0, 1, 12, 0, 0));
 		expect(Interval.fromString('12:00:00').toDate(2020, 0, 1)).toEqual(new Date(2020, 0, 1, 12, 0, 0));
+		expect(Interval.fromString('12:00:00').toDate(2020, 0, 1, 11)).toEqual(new Date(2020, 0, 1, 23, 0, 0));
+		expect(Interval.fromString('12:00:00').toDate(2020, 0, 1, 11, 12)).toEqual(new Date(2020, 0, 1, 23, 12, 0));
+		expect(Interval.fromString('12:00:00').toDate(2020, 0, 1, 11, 12, 4)).toEqual(new Date(2020, 0, 1, 23, 12, 4));
 		expect(typeof Interval.fromString('12:00:00').toDate().toISOString() === 'string').toBeTruthy();
 		expect(typeof Interval.fromString('12:00:00').toLocaleString() === 'string').toBeTruthy();
 	});
@@ -113,9 +128,9 @@ describe('sum and subtraction of times', () => {
 		expect(Interval.fromString('-12:00:00').add(Interval.fromString('01:00:59')).toString()).toEqual('-10:59:01');
 	});
 	it('adds 2 times with overflow', () => {
-		expect(Interval.fromString('12:00:00').add(Interval.fromString('23:00:59')).toString()).toEqual('1:11:00:59');
+		expect(Interval.fromString('12:00:00').add(Interval.fromString('23:00:59')).toString()).toEqual('1d11:00:59');
 		expect(Interval.fromString('12:00:00').add(Interval.fromString('-13:00:59')).toString()).toEqual('-1:00:59');
-		expect(Interval.fromString('-12:00:00').add(Interval.fromString('-12:00:59')).toString()).toEqual('-1:00:00:59');
+		expect(Interval.fromString('-12:00:00').add(Interval.fromString('-12:00:59')).toString()).toEqual('-1d00:00:59');
 		expect(Interval.fromString('-01:00:00').add(Interval.fromString('01:00:59')).toString()).toEqual('59');
 	});
 	it('subs 2 times without overflow', () => {
@@ -125,9 +140,9 @@ describe('sum and subtraction of times', () => {
 		expect(Interval.fromString('-12:00:00').sub(Interval.fromString('-01:00:59')).toString()).toEqual('-10:59:01');
 	});
 	it('subs 2 times with overflow', () => {
-		expect(Interval.fromString('12:00:00').sub(Interval.fromString('-23:00:59')).toString()).toEqual('1:11:00:59');
+		expect(Interval.fromString('12:00:00').sub(Interval.fromString('-23:00:59')).toString()).toEqual('1d11:00:59');
 		expect(Interval.fromString('12:00:00').sub(Interval.fromString('13:00:59')).toString()).toEqual('-1:00:59');
-		expect(Interval.fromString('-12:00:00').sub(Interval.fromString('12:00:59')).toString()).toEqual('-1:00:00:59');
+		expect(Interval.fromString('-12:00:00').sub(Interval.fromString('12:00:59')).toString()).toEqual('-1d00:00:59');
 		expect(Interval.fromString('-01:00:00').sub(Interval.fromString('-01:00:59')).toString()).toEqual('59');
 	});
 });
