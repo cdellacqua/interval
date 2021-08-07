@@ -1,6 +1,6 @@
 {
 	"name": "@cdellacqua/interval",
-	"version": "2.1.0",
+	"version": "2.1.1",
 	"description": "An Interval class for JavaScript",
 	"types": "build/index.d.ts",
 	"main": "build/index.cjs.js",
