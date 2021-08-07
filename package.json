@@ -3,8 +3,8 @@
 	"version": "2.1.3",
 	"description": "An Interval class for JavaScript",
 	"types": "build/index.d.ts",
-	"main": "build/index.cjs.js",
-	"module": "build/index.esm.js",
+	"main": "build/index.cjs",
+	"module": "build/index.js",
 	"type": "module",
 	"scripts": {
 		"test": "jest --no-cache",
@@ -31,8 +31,8 @@
 	],
 	"exports": {
 		".": {
-			"import": "./build/index.esm.js",
-			"require": "./build/index.cjs.js"
+			"import": "./build/index.js",
+			"require": "./build/index.cjs"
 		},
 		"./package.json": "./package.json"
 	},
