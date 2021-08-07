@@ -2,6 +2,11 @@
 
 An Interval class for JavaScript
 
+
+[NPM Package](https://www.npmjs.com/package/@cdellacqua/interval)
+
+`npm install @cdellacqua/interval`
+
 ## Full documentation:
 * [Interval](https://github.com/cdellacqua/interval/blob/master/docs/classes/interval.md)
 
